@@ -75,7 +75,8 @@ export function NewStudent() {
                         <input
                             type="text"
                             className="form-control"
-                            id="address" value={address}
+                            id="address" 
+                            value={address}
                             onChange={(event) => setAddress(event.target.value)}
                             placeholder="Ditite seu endereço completo aqui"
                             required

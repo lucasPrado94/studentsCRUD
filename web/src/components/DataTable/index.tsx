@@ -9,6 +9,7 @@ import { AiFillDelete } from 'react-icons/ai';
 
 import Button from '@mui/material/Button';
 import { ModalDialogImage } from '../ModalDialogImage';
+import { Link } from 'react-router-dom';
 
 export function DataTable() {
     const [students, setStudents] = useState<Student[]>([]);
@@ -78,11 +79,11 @@ export function DataTable() {
                                     </td>
                                     <td>
                                         <div>
-                                            <Button onClick={() => handleClickOpenModalImage(student.imageFileName, student.name)}>
+                                            <Link to={`/edit-student/${student.id}`} >
                                                 <IconContext.Provider value={{ color: "#1f05f0", className: "global-class-name", size: "1.5em" }}>
                                                     <AiFillEdit />
                                                 </IconContext.Provider>
-                                            </Button>
+                                            </Link>
 
                                             <Button onClick={() => handleDelete(student.id as any)}>
                                                 <IconContext.Provider value={{ color: "#f00510", className: "global-class-name", size: "1.5em" }}>
