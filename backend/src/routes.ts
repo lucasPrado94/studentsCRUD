@@ -1,13 +1,21 @@
 import Router from 'express';
+import Cors from 'cors';
 import { CreateStudentController } from './controllers/CreateStudentController';
 import multer from 'multer';
 import uploadConfig from './config/upload';
 import { GetAllStudentsController } from './controllers/GetAllStudentsController';
+import { DeleteStudentController } from './controllers/DeleteStudentController';
 
 const router = Router();
 const upload = multer(uploadConfig);
 
+router.use(Cors({
+    origin: '*',
+    credentials: true
+}))
+
 router.post('/students', upload.single('image'), new CreateStudentController().handle);
 router.get('/students', new GetAllStudentsController().handle);
+router.delete('/students/:id', new DeleteStudentController().handle);
 
 export default router;
