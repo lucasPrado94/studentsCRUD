@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import api from '../../services/api';
 import styles from './styles.module.scss';
-import { BASE_URL } from '../../utils/requests';
 
 export function EditStudent() {
     const [name, setName] = useState<string>('');
@@ -110,7 +109,7 @@ export function EditStudent() {
                         {currentImageFileName !== '' &&
                             <div className="col-md-2">
                                 <span className="form-label">Foto atual</span>
-                                <img src={`${BASE_URL}/uploads/${currentImageFileName}`} alt={name} className={styles.currentImage} />
+                                <img src={`${process.env.REACT_APP_BACKEND_URL}/uploads/${currentImageFileName}`} alt={name} className={styles.currentImage} />
                             </div>
                         }
                     </div>

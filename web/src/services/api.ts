@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { BASE_URL } from '../utils/requests';
 
 const api = axios.create({
-    baseURL: BASE_URL,
+    baseURL: process.env.REACT_APP_BACKEND_URL,
 })
 
 export default api;
