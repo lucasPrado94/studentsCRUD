@@ -1,14 +1,17 @@
 import { NavBar } from '../../components/NavBar';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import api from '../../services/api';
 import styles from './styles.module.scss';
+import { BASE_URL } from '../../utils/requests';
 
 export function EditStudent() {
     const [name, setName] = useState<string>('');
     const [address, setAddress] = useState<string>('');
     const [currentImageFileName, setCurrentImageFileName] = useState<string>('');
+    const [newImage, setNewImage] = useState<File>();
+    const [studentId, setStudentId] = useState<number>();
 
     const params = useParams();
 
@@ -17,14 +20,49 @@ export function EditStudent() {
             setName(response.data.name);
             setAddress(response.data.address);
             setCurrentImageFileName(response.data.imageFileName);
+            setStudentId(response.data.id);
         })
     }, [params.id])
 
     const navigate = useNavigate();
 
-    const handleSubmit = () => {
+    const handleSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        if (name === '' || address === '') {
+            alert('Você precisa digitar um nome e um endereço.');
+            return;
+        }
+
+        const data = new FormData();
+
+        data.append('name', name);
+        data.append('address', address);
+        data.append('currentImageFileName', currentImageFileName);
+        if (newImage) {
+            data.append('image', newImage);
+        }
+
+        const result = await api.patch(`students/${studentId}`, data);
+
+        if (result.status === 200)
+            navigate('/register');
+        else
+            alert('Houve um erro ao salvar os dados do aluno');
 
     };
+
+    function handleSelectedNewImage(event: ChangeEvent<HTMLInputElement>) {
+        if (!event.target.files) {
+            return;
+        }
+
+        if (event.target.files[0].type !== 'image/jpeg' && event.target.files[0].type !== 'image/png') {
+            alert('O arquivo escolhido não é uma imagem. Escolha um arquivo em formato jpg, jpeg ou png');
+            return;
+        }
+
+        setNewImage(event.target.files[0]);
+    }
 
     function handleCancel() {
         navigate('/register');
@@ -34,10 +72,11 @@ export function EditStudent() {
         <div>
             <NavBar />
             <section className="container">
-                <h1 className="mt-2">Edição dos dados do aluno</h1>
-                <div className="row">
-                    <div className="col-md-10">
-                        <form onSubmit={handleSubmit}>
+                <h1 className="mt-2">Atualização dos dados do aluno</h1>
+                <form onSubmit={handleSubmit}>
+                    <div className="row">
+                        <div className="col-md-10">
+
                             <div className="mb-3">
                                 <span>Os campos com * são de preenchimento obrigatório.</span>
                             </div>
@@ -65,31 +104,33 @@ export function EditStudent() {
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
-                                <label htmlFor="image" className="form-label">Alterar foto</label>
-                                <input
-                                    type="file"
-                                    className="form-control"
-                                    id="image"
-                                    accept=".jpg,.jpeg,.png"
-                                    required
-                                    aria-describedby="fileHelp"
-                                />
-                                <small id="fileHelp" className="form-text text-muted">Caso deseje alterar a foto, selecione uma nova. Caso contrário, salve sem selecionar um novo arquivo.</small>
+
+
+                        </div>
+                        {currentImageFileName !== '' &&
+                            <div className="col-md-2">
+                                <span className="form-label">Foto atual</span>
+                                <img src={`${BASE_URL}/uploads/${currentImageFileName}`} alt={name} className={styles.currentImage} />
                             </div>
-                        </form>
+                        }
                     </div>
-
-                    <div className="col-md-2">
-                        <span className="form-label">Foto atual</span>
-                        <img src={`http://localhost:4000/uploads/${currentImageFileName}`} alt={name} className={styles.currentImage} />
+                    <div className="mb-3  mt-5">
+                        <label htmlFor="image" className="form-label">Nova foto</label>
+                        <input
+                            type="file"
+                            className="form-control"
+                            id="image"
+                            accept=".jpg,.jpeg,.png"
+                            aria-describedby="fileHelp"
+                            onChange={handleSelectedNewImage}
+                        />
+                        <small id="fileHelp" className="form-text text-muted">Caso deseje alterar a foto, selecione uma nova. Caso contrário, salve sem selecionar um novo arquivo.</small>
                     </div>
-
                     <div className="mb-3 d-flex justify-content-center">
-                        <button type="submit" className="btn btn-primary">Cadastrar</button>
+                        <button type="submit" className="btn btn-primary">Atualizar</button>
                         <button type="button" onClick={handleCancel} className="btn btn-danger ms-2">Cancelar</button>
                     </div>
-                </div>
+                </form>
             </section>
         </div>
     )

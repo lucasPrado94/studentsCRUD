@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 export function DataTable() {
     const [students, setStudents] = useState<Student[]>([]);
     const [openModalImage, setOpenModalImage] = useState(false);
+    const [reloadPageFlag, setReloadPageFlag] = useState(false);
     const [currentModalImageInfo, setCurrentModalImageInfo] = useState({
         name: '',
         imageFileName: ''
@@ -23,7 +24,7 @@ export function DataTable() {
         api.get('students').then(response => {
             setStudents(response.data);
         })
-    }, [])
+    }, [reloadPageFlag])
 
     const handleClickOpenModalImage = (currentImage: string, name: string) => {
         setOpenModalImage(true);
@@ -45,7 +46,7 @@ export function DataTable() {
         const result = await api.delete(`students/${id}`);
         if (result.status === 200) {
             alert('Aluno excluído com sucesso!');
-            window.location.reload();
+            setReloadPageFlag(!reloadPageFlag);
         } else {
             alert('Houve um problema ao excluir o aluno');
         }
@@ -54,6 +55,7 @@ export function DataTable() {
     return (
         <>
             <div className="table-responsive">
+                <span>Quantidade total de alunos: {students.length}</span>
                 <table className="table table-striped table-sm">
                     <thead>
                         <tr>

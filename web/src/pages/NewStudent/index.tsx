@@ -29,6 +29,11 @@ export function NewStudent() {
             return
         };
 
+        if (name === '' || address === '') {
+            alert('Você precisa digitar um nome e um endereço.');
+            return
+        }
+
         const data = new FormData();
 
         data.append('name', name);
@@ -75,10 +80,10 @@ export function NewStudent() {
                         <input
                             type="text"
                             className="form-control"
-                            id="address" 
+                            id="address"
                             value={address}
                             onChange={(event) => setAddress(event.target.value)}
-                            placeholder="Ditite seu endereço completo aqui"
+                            placeholder="Digite seu endereço completo aqui"
                             required
                         />
                     </div>
